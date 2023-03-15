@@ -1,0 +1,18 @@
+{
+  "name": "bt-es6",
+  "version": "1.0.0",
+  "description": "",
+  "scripts": {
+    "start": "parcel index.html",
+    "build": "parcel build index.html"
+  },
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "buffer": "^5.7.1",
+    "parcel": "^2.8.3"
+  },
+  "dependencies": {
+    "axios": "^1.3.4"
+  }
+}
