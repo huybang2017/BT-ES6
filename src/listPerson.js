@@ -5,7 +5,5 @@ class ListPerson {
   addPerson(person) {
     this.persons.push(person);
   }
-
-
 }
 export default ListPerson;

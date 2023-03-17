@@ -17,14 +17,24 @@ import {
   handleEmployeeForm,
   handleCustomerForm,
 } from "./handleLayout.js";
-import ListPerson from "./listPerson.js";
+import {
+  setStoragePerson,
+  setStorageStudent,
+  setStorageEmployee,
+  setStorageCustomer,
+  getStoragePerson,
+  getStorageStudent,
+  getStorageEmployee,
+  getStorageCustomer,
+  personList,
+  studentList,
+  employeeList,
+  customerList,
+} from "./localStorage";
 
-let personList = new ListPerson();
-let studentList = new ListPerson();
-let employeeList = new ListPerson();
-let customerList = new ListPerson();
 renderPerson(personList.persons);
 
+// Hàm tạo data
 window.createPerson = function () {
   let regency = getELement("#typeForm").value;
   let name = getELement("#name").value;
@@ -87,37 +97,42 @@ window.createPerson = function () {
     case 1:
       if (!notValidStudent) return;
       studentList.addPerson(student);
+      setStorageStudent();
       break;
     case 2:
       if (!notValidEmployee) return;
       employeeList.addPerson(employee);
+      setStorageEmployee();
       break;
     case 3:
       if (!notValidCustomer) return;
       customerList.addPerson(customer);
+      setStorageCustomer();
       break;
   }
   renderPerson(personList.persons);
+  setStoragePerson();
 };
 // lấy data lên form
 window.getDataOnForm = function (personID) {
   getELement("#btnAdd").disabled = true;
   getELement("#ID").disabled = true;
+  // let type = getELement("#typeForm").value;
 
   let selectedPerson = personList.persons.find(
-    (person) => person.id === personID
+    (person) => person.id == personID
   );
-  console.log(selectedPerson);
+  console.log(selectedPerson.regency);
   let selectedStudent = studentList.persons.find(
-    (student) => student.id === personID
+    (student) => student.id == personID
   );
   console.log(selectedStudent);
   let selectedEmployee = employeeList.persons.find(
-    (employee) => employee.id === personID
+    (employee) => employee.id == personID
   );
   console.log(selectedEmployee);
   let selectedCustomer = customerList.persons.find(
-    (customer) => customer.id === personID
+    (customer) => customer.id == personID
   );
   console.log(selectedCustomer);
 
@@ -159,8 +174,11 @@ window.getDataOnForm = function (personID) {
       break;
   }
 };
-
+// Hàm Update
 window.updatePerson = function () {
+  getELement("#btnAdd").disabled = false;
+  getELement("#ID").disabled = false;
+
   let regency = getELement("#typeForm").value;
   let name = getELement("#name").value;
   let address = getELement("#address").value;
@@ -211,37 +229,57 @@ window.updatePerson = function () {
     invoiceValue
   );
 
+  let notValidPerson = validPerson();
+  let notValidStudent = validStudent();
+  let notValidEmployee = validEmployee();
+  let notValidCustomer = validCustomer();
+  if (!notValidPerson) {
+    return;
+  }
+
   let indexPerson = personList.persons.findIndex((person) => person.id === id);
   personList.persons[indexPerson] = person;
   renderPerson(personList.persons);
+  setStoragePerson();
 
   switch (typeForm) {
     case 1:
+      if (!notValidStudent) return;
       let indexStudent = studentList.persons.findIndex(
         (student) => student.id === id
       );
       studentList.persons[indexStudent] = student;
+      getElement("#search").value = "Sinh Viên"
       renderStudent(studentList.persons);
+      handleStudentTable();
+      setStorageStudent();
       break;
     case 2:
+      if (!notValidEmployee) return;
       let indexEmployee = employeeList.persons.findIndex(
         (employee) => employee.id === id
       );
       employeeList.persons[indexEmployee] = employee;
+      getElement("#search").value = "Nhân Viên"
       renderEmployee(employeeList.persons);
+      handleEmployeeTable();
+      setStorageEmployee();
       break;
     case 3:
+      if (!notValidCustomer) return;
       let indexCustomer = customerList.persons.findIndex(
         (customer) => customer.id === id
       );
       customerList.persons[indexCustomer] = customer;
+      getElement("#search").value = "Khách Hàng"
       renderCustomer(customerList.persons);
+      handleCustomerTable();
+      setStorageCustomer();
       break;
   }
-
   resetForm();
 };
-
+// Hàm reset
 function resetForm() {
   getELement("#typeForm").value = "Chọn loại người dùng";
   getELement("#name").value = "";
@@ -260,7 +298,7 @@ function resetForm() {
   getELement("#invoiceValue").value = "";
   getELement("#review").value = "";
 }
-
+// Hàm xoá
 window.removePerson = function (personID) {
   let search = getElement("#search").selectedIndex;
 
@@ -339,9 +377,9 @@ function renderStudent(studentList) {
                   <td class="text-center">${student.chemistry}</td>
                   <td class="text-center">${student.mediumScore()}</td>
                   <td class="text-center">
-                      <button class="btn btn-success my-1" data-toggle="modal" data-target="#personModal" onclick="${getDataOnForm(
-                        student.id
-                      )}">Sửa</button>
+                      <button class="btn btn-success my-1" data-toggle="modal" data-target="#personModal" onclick="getDataOnForm(
+                        '${student.id}'
+                      )">Sửa</button>
                       <button class="btn btn-danger my-1" onclick="removePerson('${
                         student.id
                       }')">Xóa</button>
@@ -368,9 +406,9 @@ function renderEmployee(employeeList) {
                   <td class="text-center">${employee.email}</td>
                   <td class="text-center">$${employee.sumSalary()}</td>
                   <td class="text-center">
-                      <button class="btn btn-success my-1" data-toggle="modal" data-target="#personModal" onclick="${getDataOnForm(
-                        employee.id
-                      )}">Sửa</button>
+                      <button class="btn btn-success my-1" data-toggle="modal" data-target="#personModal" onclick="getDataOnForm(
+                        '${employee.id}'
+                      )">Sửa</button>
                       <button class="btn btn-danger my-1" onclick="removePerson('${
                         employee.id
                       }')">Xóa</button>
@@ -399,9 +437,9 @@ function renderCustomer(customerList) {
                   <td class="text-center">$${customer.invoiceValue.toLocaleString()}</td>
                   <td class="text-center">${customer.review}</td>
                   <td class="text-center">
-                      <button class="btn btn-success my-1" data-toggle="modal" data-target="#personModal" onclick="${getDataOnForm(
-                        customer.id
-                      )}">Sửa</button>
+                      <button class="btn btn-success my-1" data-toggle="modal" data-target="#personModal" onclick="getDataOnForm(
+                        '${customer.id}'
+                      )">Sửa</button>
                       <button class="btn btn-danger my-1" onclick="removePerson('${
                         customer.id
                       }')">Xóa</button>
@@ -413,8 +451,8 @@ function renderCustomer(customerList) {
 
   getElement("#personList").innerHTML = html;
 }
-// DOM
 
+// DOM
 window.searchPerson = function () {
   let search = getElement("#search").selectedIndex;
   switch (search) {
@@ -459,5 +497,10 @@ window.addPerson = function () {
   handlePersonForm();
   getELement("#btnAdd").disabled = false;
   getELement("#ID").disabled = false;
+  let search = getElement("#search").selectedIndex;
+  if (search !== 0) {
+    getElement("#search").selectedIndex = 0;
+    handlePersonTable();
+  }
   resetForm();
 };
