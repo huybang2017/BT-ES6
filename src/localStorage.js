@@ -1,9 +1,14 @@
 // LOCAL STORAGE
 import ListPerson from "./listPerson.js";
-let personList = new ListPerson();
-let studentList = new ListPerson();
-let employeeList = new ListPerson();
-let customerList = new ListPerson();
+import { Customer, Employee, Person, Student } from "./Person.js";
+const personGet = getStoragePerson()
+const studentGet = getStorageStudent()
+const employeeGet = getStorageEmployee()
+const customerGet = getStorageCustomer()
+let personList = new ListPerson(personGet);
+let studentList = new ListPerson(studentGet);
+let employeeList = new ListPerson(employeeGet);
+let customerList = new ListPerson(customerGet);
 
 function setStoragePerson() {
   const jsonPerson = JSON.stringify(personList.persons);
@@ -40,6 +45,7 @@ function getStoragePerson() {
       person.email
     );
   }
+  return personList;
 }
 function getStorageStudent() {
   const jsonStundent = localStorage.getItem("studentList");
@@ -62,6 +68,7 @@ function getStorageStudent() {
       student.chemistry
     );
   }
+  return studentList;
 }
 function getStorageEmployee() {
   const jsonEmployee = localStorage.getItem("employeeList");
@@ -83,6 +90,7 @@ function getStorageEmployee() {
       employee.salaryOneDay
     );
   }
+  return employeeList;
 }
 function getStorageCustomer() {
   const jsonCustomer = localStorage.getItem("customerList");
@@ -105,6 +113,7 @@ function getStorageCustomer() {
       customer.invoiceValue
     );
   }
+  return customerList;
 }
 
 export {
@@ -112,10 +121,6 @@ export {
   setStorageStudent,
   setStorageEmployee,
   setStorageCustomer,
-  getStoragePerson,
-  getStorageStudent,
-  getStorageEmployee,
-  getStorageCustomer,
   personList,
   studentList,
   employeeList,

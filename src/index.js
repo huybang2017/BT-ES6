@@ -22,10 +22,6 @@ import {
   setStorageStudent,
   setStorageEmployee,
   setStorageCustomer,
-  getStoragePerson,
-  getStorageStudent,
-  getStorageEmployee,
-  getStorageCustomer,
   personList,
   studentList,
   employeeList,
@@ -249,7 +245,7 @@ window.updatePerson = function () {
         (student) => student.id === id
       );
       studentList.persons[indexStudent] = student;
-      getElement("#search").value = "Sinh Viên"
+      getElement("#search").value = "Sinh Viên";
       renderStudent(studentList.persons);
       handleStudentTable();
       setStorageStudent();
@@ -260,7 +256,7 @@ window.updatePerson = function () {
         (employee) => employee.id === id
       );
       employeeList.persons[indexEmployee] = employee;
-      getElement("#search").value = "Nhân Viên"
+      getElement("#search").value = "Nhân Viên";
       renderEmployee(employeeList.persons);
       handleEmployeeTable();
       setStorageEmployee();
@@ -271,7 +267,7 @@ window.updatePerson = function () {
         (customer) => customer.id === id
       );
       customerList.persons[indexCustomer] = customer;
-      getElement("#search").value = "Khách Hàng"
+      getElement("#search").value = "Khách Hàng";
       renderCustomer(customerList.persons);
       handleCustomerTable();
       setStorageCustomer();
@@ -321,15 +317,19 @@ window.removePerson = function (personID) {
   switch (search) {
     case 1:
       renderStudent(studentList.persons);
+      setStorageStudent();
       break;
     case 2:
       renderEmployee(employeeList.persons);
+      setStorageEmployee();
       break;
     case 3:
       renderCustomer(customerList.persons);
+      setStorageCustomer();
       break;
     default:
       renderPerson(personList.persons);
+      setStoragePerson();
       break;
   }
 };
