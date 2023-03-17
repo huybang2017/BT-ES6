@@ -23,7 +23,7 @@ let personList = new ListPerson();
 let studentList = new ListPerson();
 let employeeList = new ListPerson();
 let customerList = new ListPerson();
-renderPerson(personList);
+renderPerson(personList.persons);
 
 window.createPerson = function () {
   let regency = getELement("#typeForm").value;
@@ -97,27 +97,33 @@ window.createPerson = function () {
       customerList.addPerson(customer);
       break;
   }
-  renderPerson(personList);
+  renderPerson(personList.persons);
 };
 // lấy data lên form
-window.getDataOnForm = function getDataOnForm(personID) {
+window.getDataOnForm = function (personID) {
   getELement("#btnAdd").disabled = true;
   getELement("#ID").disabled = true;
 
+  let selectedPerson = personList.persons.find(
+    (person) => person.id === personID
+  );
+  console.log(selectedPerson);
   let selectedStudent = studentList.persons.find(
     (student) => student.id === personID
   );
+  console.log(selectedStudent);
   let selectedEmployee = employeeList.persons.find(
     (employee) => employee.id === personID
   );
+  console.log(selectedEmployee);
   let selectedCustomer = customerList.persons.find(
     (customer) => customer.id === personID
   );
+  console.log(selectedCustomer);
 
-  let regency = personList.persons.regency;
-  switch (regency) {
+  switch (selectedPerson.regency) {
     case "Sinh Viên":
-      getELement("#typeForm").value = regency;
+      getELement("#typeForm").value = selectedStudent.regency;
       getELement("#name").value = selectedStudent.name;
       getELement("#address").value = selectedStudent.address;
       getELement("#email").value = selectedStudent.email;
@@ -129,7 +135,7 @@ window.getDataOnForm = function getDataOnForm(personID) {
       handleStudentForm();
       break;
     case "Nhân Viên":
-      getELement("#typeForm").value = regency;
+      getELement("#typeForm").value = selectedEmployee.regency;
       getELement("#name").value = selectedEmployee.name;
       getELement("#address").value = selectedEmployee.address;
       getELement("#email").value = selectedEmployee.email;
@@ -140,7 +146,7 @@ window.getDataOnForm = function getDataOnForm(personID) {
       handleEmployeeForm();
       break;
     case "Khách Hàng":
-      getELement("#typeForm").value = regency;
+      getELement("#typeForm").value = selectedCustomer.regency;
       getELement("#name").value = selectedCustomer.name;
       getELement("#address").value = selectedCustomer.address;
       getELement("#email").value = selectedCustomer.email;
@@ -205,37 +211,34 @@ window.updatePerson = function () {
     invoiceValue
   );
 
+  let indexPerson = personList.persons.findIndex((person) => person.id === id);
+  personList.persons[indexPerson] = person;
+  renderPerson(personList.persons);
+
   switch (typeForm) {
     case 1:
       let indexStudent = studentList.persons.findIndex(
         (student) => student.id === id
       );
-      studentList[indexStudent] = student;
+      studentList.persons[indexStudent] = student;
+      renderStudent(studentList.persons);
       break;
     case 2:
       let indexEmployee = employeeList.persons.findIndex(
         (employee) => employee.id === id
       );
-      employeeList[indexEmployee] = employee;
+      employeeList.persons[indexEmployee] = employee;
+      renderEmployee(employeeList.persons);
       break;
     case 3:
       let indexCustomer = customerList.persons.findIndex(
         (customer) => customer.id === id
       );
-      customerList[indexCustomer] = customer;
-      break;
-    default:
-      let indexPerson = personList.persons.findIndex(
-        (person) => person.id === id
-      );
-      personList[indexPerson] = person;
+      customerList.persons[indexCustomer] = customer;
+      renderCustomer(customerList.persons);
       break;
   }
 
-  renderPerson(personList);
-  renderStudent(studentList);
-  renderEmployee(employeeList);
-  renderCustomer(customerList);
   resetForm();
 };
 
@@ -259,29 +262,44 @@ function resetForm() {
 }
 
 window.removePerson = function (personID) {
+  let search = getElement("#search").selectedIndex;
+
   personList.persons = personList.persons.filter(
-    (person) => (person.id = personID)
+    (person) => person.id !== personID
   );
+
   studentList.persons = studentList.persons.filter(
     (student) => student.id !== personID
   );
+
   employeeList.persons = employeeList.persons.filter(
     (employee) => employee.id !== personID
   );
+
   customerList.persons = customerList.persons.filter(
     (customer) => customer.id !== personID
   );
 
-  renderPerson(personList);
-  renderStudent(studentList);
-  renderEmployee(employeeList);
-  renderCustomer(customerList);
+  switch (search) {
+    case 1:
+      renderStudent(studentList.persons);
+      break;
+    case 2:
+      renderEmployee(employeeList.persons);
+      break;
+    case 3:
+      renderCustomer(customerList.persons);
+      break;
+    default:
+      renderPerson(personList.persons);
+      break;
+  }
 };
 
 // Hàm thêm chung
 function renderPerson(personList) {
-  console.log(personList.persons);
-  let html = personList.persons.reduce((result, person) => {
+  console.log(personList);
+  let html = personList.reduce((result, person) => {
     return (
       result +
       `
@@ -306,7 +324,7 @@ function renderPerson(personList) {
 
 // Hiển thị danh sách sinh viên
 function renderStudent(studentList) {
-  let html = studentList.persons.reduce((result, student) => {
+  let html = studentList.reduce((result, student) => {
     return (
       result +
       `
@@ -324,7 +342,9 @@ function renderStudent(studentList) {
                       <button class="btn btn-success my-1" data-toggle="modal" data-target="#personModal" onclick="${getDataOnForm(
                         student.id
                       )}">Sửa</button>
-                      <button class="btn btn-danger my-1" onclick="removePerson('${student.id}')">Xóa</button>
+                      <button class="btn btn-danger my-1" onclick="removePerson('${
+                        student.id
+                      }')">Xóa</button>
                   </td>
               </tr>
               `
@@ -336,7 +356,7 @@ function renderStudent(studentList) {
 
 // Hiển thị danh sách Nhân viên
 function renderEmployee(employeeList) {
-  let html = employeeList.persons.reduce((result, employee) => {
+  let html = employeeList.reduce((result, employee) => {
     return (
       result +
       `
@@ -351,7 +371,9 @@ function renderEmployee(employeeList) {
                       <button class="btn btn-success my-1" data-toggle="modal" data-target="#personModal" onclick="${getDataOnForm(
                         employee.id
                       )}">Sửa</button>
-                      <button class="btn btn-danger my-1" onclick="removePerson('${employee.id}')">Xóa</button>
+                      <button class="btn btn-danger my-1" onclick="removePerson('${
+                        employee.id
+                      }')">Xóa</button>
                   </td>
               </tr>
               `
@@ -363,7 +385,7 @@ function renderEmployee(employeeList) {
 
 // Hiển thị danh sách khách hàng
 function renderCustomer(customerList) {
-  let html = customerList.persons.reduce((result, customer) => {
+  let html = customerList.reduce((result, customer) => {
     return (
       result +
       `
@@ -380,7 +402,9 @@ function renderCustomer(customerList) {
                       <button class="btn btn-success my-1" data-toggle="modal" data-target="#personModal" onclick="${getDataOnForm(
                         customer.id
                       )}">Sửa</button>
-                      <button class="btn btn-danger my-1" onclick="removePerson('${customer.id}')">Xóa</button>
+                      <button class="btn btn-danger my-1" onclick="removePerson('${
+                        customer.id
+                      }')">Xóa</button>
                   </td>
               </tr>
               `
@@ -395,19 +419,19 @@ window.searchPerson = function () {
   let search = getElement("#search").selectedIndex;
   switch (search) {
     case 1:
-      renderStudent(studentList);
+      renderStudent(studentList.persons);
       handleStudentTable();
       break;
     case 2:
-      renderEmployee(employeeList);
+      renderEmployee(employeeList.persons);
       handleEmployeeTable();
       break;
     case 3:
-      renderCustomer(customerList);
+      renderCustomer(customerList.persons);
       handleCustomerTable();
       break;
     default:
-      renderPerson(personList);
+      renderPerson(personList.persons);
       handlePersonTable();
       break;
   }
