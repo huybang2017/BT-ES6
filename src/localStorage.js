@@ -86,7 +86,7 @@ function getStorageEmployee() {
       employee.address,
       employee.id,
       employee.email,
-      employee.dayOfWork,
+      employee.dateOfWork,
       employee.salaryOneDay
     );
   }
