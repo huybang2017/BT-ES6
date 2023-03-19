@@ -482,12 +482,20 @@ window.chooseType = function () {
   switch (typeForm) {
     case 1:
       handleStudentForm();
+      getELement("#notiMath").innerHTML = "";
+      getELement("#notiChemistry").innerHTML = "";
+      getELement("#notiPhysics").innerHTML = "";
       break;
     case 2:
       handleEmployeeForm();
+      getELement("#notiDayOfWork").innerHTML = "";
+      getELement("#notiSalaryOneDay").innerHTML = "";
       break;
     case 3:
       handleCustomerForm();
+      getELement("#notiNameCompany").innerHTML = "";
+      getELement("#notiInvoiceValue").innerHTML = "";
+      getELement("#notiReview").innerHTML = "";
       break;
     default:
       handlePersonForm();
