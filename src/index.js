@@ -301,35 +301,37 @@ window.removePerson = function (personID) {
   personList.persons = personList.persons.filter(
     (person) => person.id !== personID
   );
+  setStoragePerson();
+
 
   studentList.persons = studentList.persons.filter(
     (student) => student.id !== personID
   );
+  setStorageStudent();
 
   employeeList.persons = employeeList.persons.filter(
     (employee) => employee.id !== personID
   );
+  setStorageEmployee();
 
   customerList.persons = customerList.persons.filter(
     (customer) => customer.id !== personID
   );
+  setStorageCustomer();
+
 
   switch (search) {
     case 1:
       renderStudent(studentList.persons);
-      setStorageStudent();
       break;
     case 2:
       renderEmployee(employeeList.persons);
-      setStorageEmployee();
       break;
     case 3:
       renderCustomer(customerList.persons);
-      setStorageCustomer();
       break;
     default:
       renderPerson(personList.persons);
-      setStoragePerson();
       break;
   }
 };
